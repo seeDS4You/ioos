@@ -18,16 +18,15 @@ workflows:
     name: Export three signed IPA files
     instance_type: mac_mini_m2
     max_build_duration: 60
+    working_directory: iOS-Apps
     environment:
       xcode: latest
     scripts:
       - name: Verify sources before archiving
         script: |
-          cd iOS-Apps
           bash scripts/build.sh verify
       - name: Archive and export each app using automatic signing
         script: |
-          cd iOS-Apps
           for scheme in SISSStaff SISSAdmin SISSSupervisor; do
             xcode-project build-ipa --workspace SISSApps.xcworkspace --scheme "$scheme" --archive-directory "build/$scheme" --ipa-directory "build/ipa/$scheme"
           done
