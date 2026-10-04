@@ -27,8 +27,9 @@ workflows:
           bash scripts/build.sh verify
       - name: Archive and export each app using automatic signing
         script: |
+          cd iOS-Apps
           for scheme in SISSStaff SISSAdmin SISSSupervisor; do
-            xcode-project build-ipa --workspace iOS-Apps/SISSApps.xcworkspace --scheme "$scheme" --archive-directory "iOS-Apps/build/$scheme" --ipa-directory "iOS-Apps/build/ipa/$scheme"
+            xcode-project build-ipa --workspace SISSApps.xcworkspace --scheme "$scheme" --archive-directory "build/$scheme" --ipa-directory "build/ipa/$scheme"
           done
     artifacts:
       - iOS-Apps/build/ipa/**/*.ipa
