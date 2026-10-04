@@ -1,0 +1,46 @@
+workflows:
+  verify-three-iphone-apps:
+    name: Verify SISS Staff, Admin and Supervisor
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      xcode: latest
+    scripts:
+      - name: Compile three apps and run contract tests
+        script: |
+          cd iOS-Apps
+          bash scripts/build.sh verify
+    artifacts:
+      - iOS-Apps/build/**/*.xcresult
+      - iOS-Apps/build/**/Build/Products/Debug-iphonesimulator/*.app
+  signed-three-ipa-files:
+    name: Export three signed IPA files
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      xcode: latest
+      ios_signing:
+        provisioning_profiles:
+          - siss_staff_ad_hoc
+          - siss_admin_ad_hoc
+          - siss_supervisor_ad_hoc
+        certificates:
+          - siss_distribution
+    scripts:
+      - name: Configure provisioned signing
+        script: |
+          cd iOS-Apps
+          xcode-project use-profiles --project SISSApps.xcodeproj
+      - name: Verify sources before archiving
+        script: |
+          cd iOS-Apps
+          bash scripts/build.sh verify
+      - name: Archive and export each app using configured profiles
+        script: |
+          cd iOS-Apps
+          for scheme in SISSStaff SISSAdmin SISSSupervisor; do
+            xcode-project build-ipa --project SISSApps.xcodeproj --scheme "$scheme" --archive-directory "build/$scheme" --ipa-directory "build/ipa/$scheme"
+          done
+    artifacts:
+      - iOS-Apps/build/ipa/**/*.ipa
+      - iOS-Apps/build/**/*.xcresult

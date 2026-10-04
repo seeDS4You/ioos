@@ -1,0 +1,14 @@
+{
+  "checked_at_utc": "2026-10-04T16:16:27.285027+00:00",
+  "structural_checks_passed": 81,
+  "structural_checks_failed": 0,
+  "swift_grammar": "11 Swift files parsed without syntax errors",
+  "shell_script": "bash -n passed",
+  "python_scripts": "py_compile passed",
+  "yaml": "parsed; two workflows and three explicit signing profiles",
+  "xcode_compilation": "NOT RUN - no macOS/Xcode build host",
+  "simulator_tests": "NOT RUN",
+  "physical_iphone_checks": "NOT RUN",
+  "ipa_export": "NOT RUN - no Apple signing account",
+  "exact_android_ui_parity": "NOT VERIFIED"
+}

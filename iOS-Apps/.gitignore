@@ -1,0 +1,8 @@
+build/
+.validation-tools/
+__pycache__/
+*.p12
+*.mobileprovision
+*.p8
+xcuserdata/
+.DS_Store
