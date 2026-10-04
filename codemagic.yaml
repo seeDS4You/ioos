@@ -25,8 +25,9 @@ workflows:
         script: |
           cd iOS-Apps
           bash scripts/build.sh verify
+          cd ..
           for scheme in SISSStaff SISSAdmin SISSSupervisor; do
-            xcode-project build-ipa --workspace SISSApps.xcworkspace --scheme "$scheme" --archive-directory "build/$scheme" --ipa-directory "build/ipa/$scheme"
+            xcode-project build-ipa --workspace iOS-Apps/SISSApps.xcworkspace --scheme "$scheme" --archive-directory "iOS-Apps/build/$scheme" --ipa-directory "iOS-Apps/build/ipa/$scheme"
           done
     artifacts:
       - iOS-Apps/build/ipa/**/*.ipa
