@@ -20,23 +20,12 @@ workflows:
     max_build_duration: 60
     environment:
       xcode: latest
-      ios_signing:
-        provisioning_profiles:
-          - siss_staff_ad_hoc
-          - siss_admin_ad_hoc
-          - siss_supervisor_ad_hoc
-        certificates:
-          - siss_distribution
     scripts:
-      - name: Configure provisioned signing
-        script: |
-          cd iOS-Apps
-          xcode-project use-profiles --workspace SISSApps.xcworkspace
       - name: Verify sources before archiving
         script: |
           cd iOS-Apps
           bash scripts/build.sh verify
-      - name: Archive and export each app using configured profiles
+      - name: Archive and export each app using automatic signing
         script: |
           cd iOS-Apps
           for scheme in SISSStaff SISSAdmin SISSSupervisor; do
