@@ -14,20 +14,40 @@ workflows:
       - iOS-Apps/build/**/*.xcresult
       - iOS-Apps/build/**/Build/Products/Debug-iphonesimulator/*.app
 
-  signed-three-ipa-files:
-    name: Export three signed IPA files
+  sideloadly-ipa-files:
+    name: Build IPAs for Sideloadly
     instance_type: mac_mini_m2
     max_build_duration: 60
     environment:
       xcode: latest
     scripts:
-      - name: Verify sources and archive apps
+      - name: Build and package raw IPAs for device
         script: |
           cd iOS-Apps
-          bash scripts/build.sh verify
+          mkdir -p build/sideloadly-ipas
+          
           for scheme in SISSStaff SISSAdmin SISSSupervisor; do
-            xcode-project build-ipa --project SISSApps.xcodeproj --scheme "$scheme" --archive-directory "build/$scheme" --ipa-directory "build/ipa/$scheme"
-          done
+            echo "Building $scheme for device..."
+            xcodebuild build \
+              -project SISSApps.xcodeproj \
+              -scheme "$scheme" \
+              -sdk iphoneos \
+              -configuration Release \
+              CODE_SIGN_IDENTITY="" \
+              CODE_SIGNING_REQUIRED=NO \
+              CODE_SIGNING_ALLOWED=NO \
+              DERIVE_MAPPED_DATA_SYMBOL_FILE=NO \
+              CONFIGURATION_BUILD_DIR="$(pwd)/build/products/$scheme"
+            
+            # Package the built .app into a Payload structure for Sideloadly
+            mkdir -p "build/payload_$scheme/Payload"
+            cp -R "build/products/$scheme/$scheme.app" "build/payload_$scheme/Payload/"
+            
+            cd "build/payload_$scheme"
+            zip -r "../sideloadly-ipas/$scheme.ipa" Payload
+            cd ../..
+            
+            rm -rf "build/payload_$scheme"
+          > done
     artifacts:
-      - iOS-Apps/build/ipa/**/*.ipa
-      - iOS-Apps/build/**/*.xcresult
+      - iOS-Apps/build/sideloadly-ipas/*.ipa
