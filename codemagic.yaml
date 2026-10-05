@@ -39,7 +39,6 @@ workflows:
               DERIVE_MAPPED_DATA_SYMBOL_FILE=NO \
               CONFIGURATION_BUILD_DIR="$(pwd)/build/products/$scheme"
             
-            # Package the built .app into a Payload structure for Sideloadly
             mkdir -p "build/payload_$scheme/Payload"
             cp -R "build/products/$scheme/$scheme.app" "build/payload_$scheme/Payload/"
             
@@ -48,6 +47,6 @@ workflows:
             cd ../..
             
             rm -rf "build/payload_$scheme"
-          > done
+          done
     artifacts:
       - iOS-Apps/build/sideloadly-ipas/*.ipa
